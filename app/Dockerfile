@@ -1,19 +1,14 @@
-# Use Python 3.9 as base image
-FROM python:3.9-slim
+FROM python:3.9-slim-buster
 
-# Set working directory
 WORKDIR /app
 
-# Copy requirements.txt and install dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
-# Copy the app files
 COPY . .
 
-# Expose port for the app
-EXPOSE 5000
+# Load environment variables from .env file
+ENV AWS_REGION ${AWS_REGION}
+ENV SECRET_NAME ${SECRET_NAME}
 
-# Run the app
 CMD ["python", "app.py"]
-

@@ -31,6 +31,12 @@ def get_db_connection():
     )
     return conn
 
+# Home route (Hello, World!)
+@app.route('/')
+def home():
+    return 'Hello, World!'
+
+# Login route
 @app.route('/login', methods=['POST'])
 def login():
     username = request.json.get('username')
@@ -48,5 +54,14 @@ def login():
     else:
         return jsonify({'message': 'Invalid username or password'}), 401
 
+# Signup route (example)
+@app.route('/signup', methods=['POST'])
+def signup():
+    username = request.json.get('username')
+    password = request.json.get('password')
+    # Add signup logic to insert the user into the database
+    return jsonify({'message': 'Signup successful!'}), 201
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
