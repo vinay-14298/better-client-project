@@ -36,7 +36,8 @@ def get_db_connection():
             host=db_host,
             user=db_user,
             password=db_password,
-            database=db_name
+            database=db_name,
+            auth_plugin='caching_sha2_password'
         )
         return conn
     except mysql.connector.Error as err:
