@@ -1,14 +1,25 @@
 from flask import Flask, request, jsonify
 import mysql.connector
-import os
+import boto3
+import json
 
 app = Flask(__name__)
 
-# Fetch MySQL credentials from environment variables or AWS Secrets Manager
-db_host = os.getenv("DB_HOST")
-db_user = os.getenv("DB_USER")
-db_password = os.getenv("DB_PASSWORD")
-db_name = os.getenv("DB_NAME")
+# Fetch secrets from AWS Secrets Manager
+def get_secrets():
+    client = boto3.client('secretsmanager', region_name='us-east-1')  # Replace with your AWS region
+    secret_name = "MySQL_Credentials"  # Replace with your secret name
+
+    response = client.get_secret_value(SecretId=secret_name)
+    secrets = json.loads(response['SecretString'])
+    return secrets
+
+# Initialize secrets
+secrets = get_secrets()
+db_host = secrets['DB_HOST']
+db_user = secrets['DB_USER']
+db_password = secrets['DB_PASSWORD']
+db_name = secrets['DB_NAME']
 
 # MySQL connection function
 def get_db_connection():
@@ -20,7 +31,6 @@ def get_db_connection():
     )
     return conn
 
-# Simple login route
 @app.route('/login', methods=['POST'])
 def login():
     username = request.json.get('username')
@@ -40,4 +50,3 @@ def login():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
