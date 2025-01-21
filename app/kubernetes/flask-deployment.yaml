@@ -1,50 +1,49 @@
-piVersion: apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: flask-app
-        namespace: flask-app-namespace
-        spec:
-            replicas: 1
-                selector:
-                      matchLabels:
-                              app: flask
-                                  template:
-                                        metadata:
-                                                labels:
-                                                          app: flask
-                                                                spec:
-                                                                        containers:
-                                                                                - name: flask-app
-                                                                                          image: <your-dockerhub-username>/flask-app:latest  # Replace with your Docker Hub image name
-                                                                                                    ports:
-                                                                                                              - containerPort: 80
-                                                                                                                        env:
-                                                                                                                                  - name: DB_HOST
-                                                                                                                                              value: "mysql-service"  # Service name of the MySQL pod
-                                                                                                                                                        - name: DB_USER
-                                                                                                                                                                    valueFrom:
-                                                                                                                                                                                  secretKeyRef:
-                                                                                                                                                                                                  name: mysql-secret
-                                                                                                                                                                                                                  key: DB_USER
-                                                                                                                                                                                                                            - name: DB_PASSWORD
-                                                                                                                                                                                                                                        valueFrom:
-                                                                                                                                                                                                                                                      secretKeyRef:
-                                                                                                                                                                                                                                                                      name: mysql-secret
-                                                                                                                                                                                                                                                                                      key: DB_PASSWORD
-                                                                                                                                                                                                                                                                                                - name: DB_NAME
-                                                                                                                                                                                                                                                                                                            value: "flaskdb"
-                                                                                                                                                                                                                                                                                                ---
-                                                                                                                                                                                                                                                                                      apiVersion: v1
-                                                                                                                                                                                                                                                                                      kind: Service
-                                                                                                                                                                                                                                                                                      metadata:
-                                                                                                                                                                                                                                                                                          name: flask-service
-                                                                                                                                                                                                                                                                                              namespace: flask-app-namespace
-                                                                                                                                                                                                                                                                                              spec:
-                                                                                                                                                                                                                                                                                                  selector:
-                                                                                                                                                                                                                                                                                                        app: flask
-                                                                                                                                                                                                                                                                                                            ports:
-                                                                                                                                                                                                                                                                                                                  - protocol: TCP
-                                                                                                                                                                                                                                                                                                                          port: 80
-                                                                                                                                                                                                                                                                                                                                  targetPort: 80
-                                                                                                                                                                                                                                                                                                                                      type: LoadBalancer
-
+  name: flask-app
+  namespace: flask-app-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask
+  template:
+    metadata:
+      labels:
+        app: flask
+    spec:
+      containers:
+        - name: flask-app
+          image: vinaybabuminnakanti2001/my_flask_app:latest  # Replace with your Docker Hub image name
+          ports:
+            - containerPort: 80
+          env:
+            - name: DB_HOST
+              value: "mysql-service"  # Service name of the MySQL pod
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              value: "flaskdb"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-service
+  namespace: flask-app-namespace
+spec:
+  selector:
+    app: flask
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
