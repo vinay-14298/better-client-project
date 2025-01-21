@@ -7,8 +7,8 @@ app = Flask(__name__)
 
 # Fetch secrets from AWS Secrets Manager
 def get_secrets():
-    client = boto3.client('secretsmanager', region_name='us-east-1')  # Replace with your AWS region
-    secret_name = "MySQL_Credentials"  # Replace with your secret name
+    client = boto3.client('secretsmanager', region_name='us-east-2')  # Replace with your AWS region
+    secret_name = "mysql/container"  # Replace with your secret name
 
     response = client.get_secret_value(SecretId=secret_name)
     secrets = json.loads(response['SecretString'])
